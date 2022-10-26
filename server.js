@@ -1,6 +1,6 @@
 const path = require('path');
 const express = require('express');
-const routes = require('./controllers');
+// const routes = require('./controllers');
 const sequelize = require('./config/connection');
 const session = require('express-session');
 const cors = require('cors');
@@ -13,7 +13,7 @@ const SequelizeStore = require('connect-session-sequelize')(session.Store);
 require('dotenv').config();
 
 const sess = {
-  secret: process.env.COOKIES_SECRECT,
+  secret: process.env.COOKIES_SECRET,
   cookie: {},
   resave: false,
   saveUninitialized: true,
@@ -31,13 +31,15 @@ app.use(express.urlencoded({ extended: false }));
 
 // set up handlebars
 const exphbs = require('express-handlebars');
-const helpers = require('./utils/helpers');
-const hbs = exphbs.create({ helpers });
+// const helpers = require('./utils/helpers');
+// const hbs = exphbs.create({ helpers });
+const hbs = exphbs.create();
+
 app.engine('handlebars', hbs.engine);
 app.set('view engine', 'handlebars');
 
 app.use(express.static(path.join(__dirname, 'public')));
-app.use(routes);
+// app.use(routes);
 
 sequelize.sync({ force: false }).then(() => {
   app.listen(PORT, () => console.log(`🌏server is running on ${PORT}`));
