@@ -1,7 +1,11 @@
 // import the Sequelize constructor from the library
 const Sequelize = require('sequelize');
+const path = require('path');
 
-require('dotenv').config();
+require('dotenv').config({
+  path: path.join(__dirname, './../.env'),
+  debug: true
+});
 
 // create connection to our db
 const sequelize = process.env.JAWSDB_URL
