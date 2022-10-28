@@ -29,7 +29,9 @@ module.exports = {
     // 'no-console': 'error',
     'no-alert': 'error',
     // 'space-before-function-paren': ['error', 'always'],
-    'newline-per-chained-call': ['error', { ignoreChainWithDepth: 2 }],
+    'newline-per-chained-call': ['error', {
+      ignoreChainWithDepth: 2
+    }],
     'array-element-newline': [
       'error',
       {
@@ -41,9 +43,21 @@ module.exports = {
     ],
     'array-bracket-spacing': ['error', 'never'],
     'no-mixed-operators': 'error',
-    'no-empty': ['error', { allowEmptyCatch: true }],
+    'no-empty': ['error', {
+      allowEmptyCatch: true
+    }],
     camelcase: 'off',
-    'object-property-newline': ['error', { allowAllPropertiesOnSameLine: false }],
+    'object-property-newline': ['error', {
+      allowAllPropertiesOnSameLine: true
+    }],
+    // 'object-curly-newline': ['error', {
+    //   ObjectExpression: 'always',
+    //   ObjectPattern: {
+    //     multiline: true
+    //   },
+    //   ImportDeclaration: 'never',
+    //   ExportDeclaration: 'always'
+    // }],
     'padded-blocks': ['error', 'never']
   }
 };
