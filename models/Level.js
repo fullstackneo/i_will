@@ -19,7 +19,9 @@ class Level extends Sequelize.Model {
       }
     }, {
       sequelize,
+      modelName: 'level',
       tableName: 'level',
+
       timestamps: false,
       indexes: [
         {
@@ -27,7 +29,9 @@ class Level extends Sequelize.Model {
           unique: true,
           using: 'BTREE',
           fields: [
-            { name: 'id' }
+            {
+              name: 'id'
+            }
           ]
         },
         {
@@ -35,7 +39,9 @@ class Level extends Sequelize.Model {
           unique: true,
           using: 'BTREE',
           fields: [
-            { name: 'name' }
+            {
+              name: 'name'
+            }
           ]
         }
       ]

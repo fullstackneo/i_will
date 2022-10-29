@@ -34,6 +34,7 @@ class Post extends Sequelize.Model {
       }
     }, {
       sequelize,
+      modelName: 'post',
       tableName: 'post',
       timestamps: true,
       indexes: [
@@ -42,21 +43,27 @@ class Post extends Sequelize.Model {
           unique: true,
           using: 'BTREE',
           fields: [
-            { name: 'id' }
+            {
+              name: 'id'
+            }
           ]
         },
         {
           name: 'user_id',
           using: 'BTREE',
           fields: [
-            { name: 'user_id' }
+            {
+              name: 'user_id'
+            }
           ]
         },
         {
           name: 'task_id',
           using: 'BTREE',
           fields: [
-            { name: 'task_id' }
+            {
+              name: 'task_id'
+            }
           ]
         }
       ]

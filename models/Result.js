@@ -26,6 +26,7 @@ class Result extends Sequelize.Model {
       }
     }, {
       sequelize,
+      modelName: 'result',
       tableName: 'result',
       timestamps: false,
       indexes: [
@@ -34,14 +35,18 @@ class Result extends Sequelize.Model {
           unique: true,
           using: 'BTREE',
           fields: [
-            { name: 'id' }
+            {
+              name: 'id'
+            }
           ]
         },
         {
           name: 'result_fk1',
           using: 'BTREE',
           fields: [
-            { name: 'task_id' }
+            {
+              name: 'task_id'
+            }
           ]
         }
       ]

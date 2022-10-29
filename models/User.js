@@ -1,9 +1,14 @@
 const Sequelize = require('sequelize');
+const bcrypt = require('bcrypt');
 module.exports = (sequelize, DataTypes) => {
   return User.init(sequelize, DataTypes);
 };
 
 class User extends Sequelize.Model {
+  checkPassword (loginPW) {
+    return bcrypt.compareSync(loginPW, this.password);
+  }
+
   static init (sequelize, DataTypes) {
     return super.init({
       id: {
@@ -13,7 +18,7 @@ class User extends Sequelize.Model {
         primaryKey: true
       },
       name: {
-        type: DataTypes.STRING(30),
+        type: DataTypes.STRING(40),
         allowNull: false
       },
       email: {
@@ -57,7 +62,18 @@ class User extends Sequelize.Model {
         }
       }
     }, {
+      hooks: {
+        async beforeCreate (newUserData) {
+          newUserData.password = await bcrypt.hash(newUserData.password, 10);
+          return newUserData;
+        },
+        async beforeUpdate (updatedUserData) {
+          updatedUserData.password = await bcrypt.hash(updatedUserData.password, 10);
+          return updatedUserData;
+        }
+      },
       sequelize,
+      modelName: 'user',
       tableName: 'user',
       timestamps: false,
       indexes: [
@@ -66,7 +82,9 @@ class User extends Sequelize.Model {
           unique: true,
           using: 'BTREE',
           fields: [
-            { name: 'id' }
+            {
+              name: 'id'
+            }
           ]
         },
         {
@@ -74,30 +92,42 @@ class User extends Sequelize.Model {
           unique: true,
           using: 'BTREE',
           fields: [
-            { name: 'name' },
-            { name: 'email' },
-            { name: 'phone' }
+            {
+              name: 'name'
+            },
+            {
+              name: 'email'
+            },
+            {
+              name: 'phone'
+            }
           ]
         },
         {
           name: 'user_fk1',
           using: 'BTREE',
           fields: [
-            { name: 'level_id' }
+            {
+              name: 'level_id'
+            }
           ]
         },
         {
           name: 'user_fk2',
           using: 'BTREE',
           fields: [
-            { name: 'position_id' }
+            {
+              name: 'position_id'
+            }
           ]
         },
         {
           name: 'user_fk3',
           using: 'BTREE',
           fields: [
-            { name: 'manager_id' }
+            {
+              name: 'manager_id'
+            }
           ]
         }
       ]

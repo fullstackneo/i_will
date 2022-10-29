@@ -27,7 +27,9 @@ class Position extends Sequelize.Model {
       }
     }, {
       sequelize,
+      modelName: 'position',
       tableName: 'position',
+
       timestamps: false,
       indexes: [
         {
@@ -35,7 +37,9 @@ class Position extends Sequelize.Model {
           unique: true,
           using: 'BTREE',
           fields: [
-            { name: 'id' }
+            {
+              name: 'id'
+            }
           ]
         },
         {
@@ -43,14 +47,18 @@ class Position extends Sequelize.Model {
           unique: true,
           using: 'BTREE',
           fields: [
-            { name: 'name' }
+            {
+              name: 'name'
+            }
           ]
         },
         {
           name: 'department_id',
           using: 'BTREE',
           fields: [
-            { name: 'department_id' }
+            {
+              name: 'department_id'
+            }
           ]
         }
       ]

@@ -19,6 +19,7 @@ class Department extends Sequelize.Model {
       }
     }, {
       sequelize,
+      modelName: 'department',
       tableName: 'department',
       timestamps: false,
       indexes: [
@@ -27,7 +28,9 @@ class Department extends Sequelize.Model {
           unique: true,
           using: 'BTREE',
           fields: [
-            { name: 'id' }
+            {
+              name: 'id'
+            }
           ]
         },
         {
@@ -35,7 +38,9 @@ class Department extends Sequelize.Model {
           unique: true,
           using: 'BTREE',
           fields: [
-            { name: 'name' }
+            {
+              name: 'name'
+            }
           ]
         }
       ]
