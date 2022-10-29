@@ -12,11 +12,13 @@ const SequelizeStore = require('connect-session-sequelize')(session.Store);
 
 const sess = {
   secret: process.env.COOKIE_SECRET,
-  cookie: {},
+  cookie: { maxAge: 24 * 60 * 60 * 1000 },
   resave: false,
   saveUninitialized: true,
   store: new SequelizeStore({
-    db: sequelize
+    db: sequelize,
+    // clear expired sessions every 2 hrs
+    checkExpirationInterval: 2 * 60 * 60 * 1000
   })
 };
 // enable CORS
@@ -31,7 +33,9 @@ app.use(express.urlencoded({ extended: false }));
 const exphbs = require('express-handlebars');
 
 // const helpers = require('./utils/helpers');
-const hbs = exphbs.create({ });
+const hbs = exphbs.create({
+
+});
 app.engine('handlebars', hbs.engine);
 app.set('view engine', 'handlebars');
 
