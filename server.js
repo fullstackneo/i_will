@@ -13,11 +13,13 @@ const SequelizeStore = require('connect-session-sequelize')(session.Store);
 const sess = {
   secret: process.env.COOKIE_SECRET,
   cookie: { maxAge: 24 * 60 * 60 * 1000 },
+  // true: always force set-cookie to user in response header
   resave: false,
-  saveUninitialized: true,
+  // dont't generate sid if sid does not exist in db: save resources in db
+  saveUninitialized: false,
   store: new SequelizeStore({
     db: sequelize,
-    // clear expired sessions every 2 hrs
+    // clear expired sessions every 2 hours
     checkExpirationInterval: 2 * 60 * 60 * 1000
   })
 };
