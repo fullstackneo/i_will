@@ -19,28 +19,94 @@ function initModels (sequelize) {
   const Task = _Task(sequelize, DataTypes);
   const User = _User(sequelize, DataTypes);
 
-  Position.belongsTo(Department, { foreignKey: 'department_id' });
-  Department.hasMany(Position, { foreignKey: 'department_id' });
-  User.belongsTo(Level, { foreignKey: 'level_id' });
-  Level.hasMany(User, { foreignKey: 'level_id' });
-  User.belongsTo(Position, { foreignKey: 'position_id' });
-  Position.hasMany(User, { foreignKey: 'position_id' });
-  Comment.belongsTo(Post, { foreignKey: 'post_id' });
-  Post.hasMany(Comment, { foreignKey: 'post_id' });
-  Post.belongsTo(Task, { foreignKey: 'task_id' });
-  Task.hasMany(Post, { foreignKey: 'task_id' });
-  Result.belongsTo(Task, { foreignKey: 'task_id' });
-  Task.hasMany(Result, { foreignKey: 'task_id' });
-  Comment.belongsTo(User, { foreignKey: 'user_id' });
-  User.hasMany(Comment, { foreignKey: 'user_id' });
-  Post.belongsTo(User, { foreignKey: 'user_id' });
-  User.hasMany(Post, { foreignKey: 'user_id' });
-  Task.belongsTo(User, { foreignKey: 'user_id' });
-  User.hasMany(Task, { foreignKey: 'user_id' });
-  Task.belongsTo(User, { foreignKey: 'manager_id' });
-  User.hasMany(Task, { foreignKey: 'manager_id' });
-  User.belongsTo(User, { foreignKey: 'manager_id' });
-  User.hasMany(User, { foreignKey: 'manager_id' });
+  Position.belongsTo(Department, {
+    foreignKey: 'department_id'
+  });
+  Department.hasMany(Position, {
+    foreignKey: 'department_id'
+  });
+  User.belongsTo(Level, {
+    foreignKey: 'level_id'
+  });
+  Level.hasMany(User, {
+    foreignKey: 'level_id'
+  });
+  User.belongsTo(Position, {
+    foreignKey: 'position_id'
+  });
+  Position.hasMany(User, {
+    foreignKey: 'position_id'
+  });
+
+  Comment.belongsTo(Post, {
+    foreignKey: 'post_id',
+    onDelete: 'CASCADE'
+  });
+  Post.hasMany(Comment, {
+    foreignKey: 'post_id',
+    onDelete: 'CASCADE'
+  });
+  Post.belongsTo(Task, {
+    foreignKey: 'task_id',
+    onDelete: 'CASCADE'
+  });
+  Task.hasMany(Post, {
+    foreignKey: 'task_id',
+    onDelete: 'CASCADE'
+  });
+  Result.belongsTo(Task, {
+    foreignKey: 'task_id',
+    onDelete: 'CASCADE'
+  });
+  Task.hasMany(Result, {
+    foreignKey: 'task_id',
+    onDelete: 'CASCADE'
+  });
+  Comment.belongsTo(User, {
+    foreignKey: 'user_id',
+    onDelete: 'SET NULL'
+  });
+  User.hasMany(Comment, {
+    foreignKey: 'user_id',
+    onDelete: 'SET NULL'
+  });
+
+  Post.belongsTo(User, {
+    foreignKey: 'user_id',
+    onDelete: 'SET NULL'
+  });
+
+  User.hasMany(Post, {
+    foreignKey: 'user_id',
+    onDelete: 'SET NULL'
+  });
+
+  Task.belongsTo(User, {
+    foreignKey: 'user_id',
+    as: 'belongsTo'
+  });
+
+  User.hasMany(Task, {
+    foreignKey: 'user_id',
+    as: 'tasksToDo'
+  });
+
+  Task.belongsTo(User, {
+    foreignKey: 'manager_id',
+    as: 'assignedBy'
+  });
+  User.hasMany(Task, {
+    foreignKey: 'manager_id',
+    as: 'assisnedTasks'
+  });
+  User.belongsTo(User, {
+    as: 'manager',
+    foreignKey: 'manager_id'
+  });
+  User.hasMany(User, {
+    as: 'team_members',
+    foreignKey: 'manager_id'
+  });
 
   return {
     Comment,
