@@ -1,34 +1,20 @@
-const { Comment, User, Post } = require('./../../models');
+const { Result, Task } = require('./../../models');
 const router = require('express').Router();
 
-router.get('/:id', (req, res) => {
-  Comment.findOne({
-    where: {
-      id: req.params.id
-    },
+router.get('/', (req, res) => {
+  Result.findAll({
     attributes: {
-      exclude: ['user_id', 'post_id']
-    },
-    include: [User, Post]
+      exclude: []
+    }
+    // include: [Task]
   })
     .then(dbData => {
-      console.log(dbData);
       if (!dbData) {
         res.status(404).json({
-          message: 'No data found!'
+          message: 'No data found'
         });
         return;
       }
-      res.json(dbData);
-    })
-    .catch(err => {
-      res.status(500).json(err);
-    });
-});
-
-router.post('/', (req, res) => {
-  Comment.create(req.body)
-    .then(dbData => {
       res.json(dbData);
     })
     .catch(err => {
@@ -37,8 +23,43 @@ router.post('/', (req, res) => {
     });
 });
 
+router.get('/:id', (req, res) => {
+  Result.findOne({
+    where: {
+      id: req.params.id
+    },
+    attributes: {
+      exclude: []
+    },
+    include: [Task]
+  })
+    .then(dbData => {
+      console.log(dbData);
+      if (!dbData) {
+        res.status(404).json({
+          message: 'No data found'
+        });
+        return;
+      }
+      res.json(dbData);
+    })
+    .catch(err => {
+      console.log(err);
+      res.status(500).json(err);
+    });
+});
+
+router.post('/', (req, res) => {
+  Result.create(req.body)
+    .then(dbData => res.json(dbData))
+    .catch(err => {
+      console.log(err);
+      res.status(500).json(err);
+    });
+});
+
 router.delete('/:id', (req, res) => {
-  Comment.destroy({
+  Result.destroy({
     where: {
       id: req.params.id
     }
@@ -57,7 +78,7 @@ router.delete('/:id', (req, res) => {
 });
 
 router.put('/:id', (req, res) => {
-  Comment.update(req.body, {
+  Result.update(req.body, {
     where: {
       id: req.params.id
     }

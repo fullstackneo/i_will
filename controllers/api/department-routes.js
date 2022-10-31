@@ -1,34 +1,17 @@
-const { Comment, User, Post } = require('./../../models');
+const { Department } = require('./../../models');
 const router = require('express').Router();
 
-router.get('/:id', (req, res) => {
-  Comment.findOne({
-    where: {
-      id: req.params.id
-    },
-    attributes: {
-      exclude: ['user_id', 'post_id']
-    },
-    include: [User, Post]
+router.get('/', (req, res) => {
+  Department.findAll({
+    order: [['id', 'DESC']]
   })
     .then(dbData => {
-      console.log(dbData);
       if (!dbData) {
         res.status(404).json({
-          message: 'No data found!'
+          message: 'No data found'
         });
         return;
       }
-      res.json(dbData);
-    })
-    .catch(err => {
-      res.status(500).json(err);
-    });
-});
-
-router.post('/', (req, res) => {
-  Comment.create(req.body)
-    .then(dbData => {
       res.json(dbData);
     })
     .catch(err => {
@@ -37,11 +20,44 @@ router.post('/', (req, res) => {
     });
 });
 
-router.delete('/:id', (req, res) => {
-  Comment.destroy({
+router.get('/:id', (req, res) => {
+  Department.findOne({
     where: {
       id: req.params.id
     }
+  })
+    .then(dbData => {
+      console.log(dbData);
+      if (!dbData) {
+        res.status(404).json({
+          message: 'No data found'
+        });
+        return;
+      }
+      res.json(dbData);
+    })
+    .catch(err => {
+      console.log(err);
+      res.status(500).json(err);
+    });
+});
+
+router.post('/', (req, res) => {
+  Department.create(req.body)
+    .then(dbData => res.json(dbData))
+    .catch(err => {
+      console.log(err);
+      res.status(500).json(err);
+    });
+});
+
+router.delete('/:id', (req, res) => {
+  Department.destroy({
+    where: {
+      id: req.params.id
+    },
+    truncate: true,
+    // cascade: true,
   })
     .then((dbData) => {
       if (!dbData) {
@@ -57,7 +73,7 @@ router.delete('/:id', (req, res) => {
 });
 
 router.put('/:id', (req, res) => {
-  Comment.update(req.body, {
+  Department.update(req.body, {
     where: {
       id: req.params.id
     }

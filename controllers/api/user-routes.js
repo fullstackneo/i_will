@@ -1,4 +1,4 @@
-const { User, Post, Comment, Position, Level, Department } = require('./../../models');
+const { User, Post, Comment, Position, Department } = require('./../../models');
 const router = require('express').Router();
 
 router.get('/', (req, res) => {
