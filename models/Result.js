@@ -21,7 +21,7 @@ class Result extends Sequelize.Model {
         }
       },
       score: {
-        type: DataTypes.TINYINT,
+        type: DataTypes.TINYINT.UNSIGNED,
         allowNull: false
       }
     }, {

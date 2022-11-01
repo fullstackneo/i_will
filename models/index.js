@@ -7,6 +7,7 @@ const _Post = require('./Post');
 const _Result = require('./Result');
 const _Task = require('./Task');
 const _User = require('./User');
+const _Access = require('./Access');
 const sequelize = require('../config/connection');
 
 function initModels (sequelize) {
@@ -18,6 +19,7 @@ function initModels (sequelize) {
   const Result = _Result(sequelize, DataTypes);
   const Task = _Task(sequelize, DataTypes);
   const User = _User(sequelize, DataTypes);
+  const Access = _Access(sequelize, DataTypes);
 
   Position.belongsTo(Department, {
     foreignKey: 'department_id'
@@ -25,6 +27,15 @@ function initModels (sequelize) {
   Department.hasMany(Position, {
     foreignKey: 'department_id'
   });
+
+  Position.belongsTo(Access, {
+    foreignKey: 'access_id'
+  });
+
+  Access.hasMany(Position, {
+    foreignKey: 'access_id'
+  });
+
   User.belongsTo(Level, {
     foreignKey: 'level_id'
   });
@@ -116,7 +127,8 @@ function initModels (sequelize) {
     Post,
     Result,
     Task,
-    User
+    User,
+    Access
   };
 }
 
