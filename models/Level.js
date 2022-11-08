@@ -21,30 +21,7 @@ class Level extends Sequelize.Model {
       sequelize,
       modelName: 'level',
       tableName: 'level',
-
-      timestamps: false,
-      indexes: [
-        {
-          name: 'PRIMARY',
-          unique: true,
-          using: 'BTREE',
-          fields: [
-            {
-              name: 'id'
-            }
-          ]
-        },
-        {
-          name: 'name',
-          unique: true,
-          using: 'BTREE',
-          fields: [
-            {
-              name: 'name'
-            }
-          ]
-        }
-      ]
+      timestamps: false
     });
   }
 }

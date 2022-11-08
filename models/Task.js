@@ -44,37 +44,7 @@ class Task extends Sequelize.Model {
       sequelize,
       modelName: 'task',
       tableName: 'task',
-      timestamps: true,
-      indexes: [
-        {
-          name: 'PRIMARY',
-          unique: true,
-          using: 'BTREE',
-          fields: [
-            {
-              name: 'id'
-            }
-          ]
-        },
-        {
-          name: 'task_fk1',
-          using: 'BTREE',
-          fields: [
-            {
-              name: 'user_id'
-            }
-          ]
-        },
-        {
-          name: 'task_fk2',
-          using: 'BTREE',
-          fields: [
-            {
-              name: 'manager_id'
-            }
-          ]
-        }
-      ]
+      timestamps: true
     });
   }
 }

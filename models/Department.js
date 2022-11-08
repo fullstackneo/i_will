@@ -21,29 +21,7 @@ class Department extends Sequelize.Model {
       sequelize,
       modelName: 'department',
       tableName: 'department',
-      timestamps: false,
-      indexes: [
-        {
-          name: 'PRIMARY',
-          unique: true,
-          using: 'BTREE',
-          fields: [
-            {
-              name: 'id'
-            }
-          ]
-        },
-        {
-          name: 'name',
-          unique: true,
-          using: 'BTREE',
-          fields: [
-            {
-              name: 'name'
-            }
-          ]
-        }
-      ]
+      timestamps: false
     });
   }
 }

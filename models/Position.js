@@ -12,13 +12,6 @@ class Position extends Sequelize.Model {
         allowNull: false,
         primaryKey: true
       },
-      access_id: {
-        type: DataTypes.TINYINT.UNSIGNED,
-        reference: {
-          model: 'access',
-          key: 'id'
-        }
-      },
       name: {
         type: DataTypes.STRING(50),
         allowNull: false,
@@ -36,38 +29,7 @@ class Position extends Sequelize.Model {
       sequelize,
       modelName: 'position',
       tableName: 'position',
-      timestamps: false,
-      indexes: [
-        {
-          name: 'PRIMARY',
-          unique: true,
-          using: 'BTREE',
-          fields: [
-            {
-              name: 'id'
-            }
-          ]
-        },
-        {
-          name: 'name',
-          unique: true,
-          using: 'BTREE',
-          fields: [
-            {
-              name: 'name'
-            }
-          ]
-        },
-        {
-          name: 'department_id',
-          using: 'BTREE',
-          fields: [
-            {
-              name: 'department_id'
-            }
-          ]
-        }
-      ]
+      timestamps: false
     });
   }
 }

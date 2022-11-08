@@ -16,24 +16,16 @@ class Access extends Sequelize.Model {
         type: DataTypes.STRING(50),
         allowNull: false,
         unique: 'role'
+      },
+      menu: {
+        type: DataTypes.JSON,
+        allowNull: false
       }
     }, {
       sequelize,
       modelName: 'access',
       tableName: 'access',
-      timestamps: false,
-      indexes: [
-        {
-          name: 'PRIMARY',
-          unique: true,
-          using: 'BTREE',
-          fields: [
-            {
-              name: 'id'
-            }
-          ]
-        }
-      ]
+      timestamps: false
     });
   }
 }

@@ -28,28 +28,7 @@ class Result extends Sequelize.Model {
       sequelize,
       modelName: 'result',
       tableName: 'result',
-      timestamps: false,
-      indexes: [
-        {
-          name: 'PRIMARY',
-          unique: true,
-          using: 'BTREE',
-          fields: [
-            {
-              name: 'id'
-            }
-          ]
-        },
-        {
-          name: 'result_fk1',
-          using: 'BTREE',
-          fields: [
-            {
-              name: 'task_id'
-            }
-          ]
-        }
-      ]
+      timestamps: false
     });
   }
 }
