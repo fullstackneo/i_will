@@ -1,6 +1,6 @@
 const path = require('path');
 const express = require('express');
-const routes = require('./controllers');
+const routes = require('./routes');
 const sequelize = require('./config/connection');
 const session = require('express-session');
 const cors = require('cors');
@@ -16,9 +16,10 @@ const sess = {
   // true: always force set-cookie to user in response header
   resave: false,
   // dont't generate sid if sid does not exist in db: save resources in db
-  saveUninitialized: false,
+  saveUninitialized: true,
   store: new SequelizeStore({
     db: sequelize,
+    tableName: 'session',
     // clear expired sessions every 2 hours
     checkExpirationInterval: 2 * 60 * 60 * 1000
   })
