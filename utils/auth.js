@@ -1,5 +1,6 @@
 function withAuth (...roles) {
   return (req, res, next) => {
+    if (req.session.role === 'admin') return next();
     // must login
     if (!req.session.loggedIn) return res.redirect('/login');
 
