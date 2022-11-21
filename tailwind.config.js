@@ -1,4 +1,5 @@
 /** @type {import('tailwindcss').Config} */
+const colors = require('tailwindcss/colors');
 module.exports = {
   experimental: {
     optimizeUniversalDefaults: true
@@ -12,7 +13,9 @@ module.exports = {
   },
   plugins: [
     require('@tailwindcss/forms'),
+    require('@tailwindcss/line-clamp'),
     require('@tailwindcss/aspect-ratio'),
+    require('@tailwindcss/typography'),
     function ({ addVariant, addUtilities }) {
       addVariant('children', '& > *');
       addUtilities({
@@ -40,7 +43,8 @@ module.exports = {
       },
       colors: {
         primary: '#fcd213',
-        secondary: ''
+        secondary: '',
+        rose: colors.rose
       },
       backgroundImage: {
         img: "url('')"
