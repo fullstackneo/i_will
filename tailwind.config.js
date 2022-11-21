@@ -3,7 +3,9 @@ module.exports = {
   experimental: {
     optimizeUniversalDefaults: true
   },
-  content: ['./views/**/*.handlebars', './public/js/**/*.js'],
+
+  content: ['./views/**/*.handlebars', './views/**/*.html', './public/js/**/*.js'],
+
   darkMode: 'class',
   corePlugins: {
     aspectRatio: false

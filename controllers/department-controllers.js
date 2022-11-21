@@ -39,7 +39,7 @@ const departmentControllers = {
         res.status(500).json(err);
       });
   },
-  create: (req, res) => {
+  createOne: (req, res) => {
     Department.create(req.body)
       .then(dbData => res.json(dbData))
       .catch(err => {
@@ -47,7 +47,7 @@ const departmentControllers = {
         res.status(500).json(err);
       });
   },
-  delete: (req, res) => {
+  deleteOne: (req, res) => {
     Department.destroy({
       where: {
         id: req.params.id
@@ -67,7 +67,7 @@ const departmentControllers = {
         res.status(500).json(err);
       });
   },
-  update: (req, res) => {
+  updateOne: (req, res) => {
     Department.update(req.body, {
       where: {
         id: req.params.id

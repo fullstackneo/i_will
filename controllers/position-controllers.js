@@ -43,7 +43,7 @@ const positionControllers = {
       });
   },
 
-  create: (req, res) => {
+  createOne: (req, res) => {
     Position.create(req.body)
       .then(dbData => res.json(dbData))
       .catch(err => {
@@ -52,7 +52,7 @@ const positionControllers = {
       });
   },
 
-  delete: (req, res) => {
+  deleteOne: (req, res) => {
     Position.destroy({
       where: {
         id: req.params.id
@@ -71,7 +71,7 @@ const positionControllers = {
       });
   },
 
-  update: (req, res) => {
+  updateOne: (req, res) => {
     Position.update(req.body, {
       where: {
         id: req.params.id

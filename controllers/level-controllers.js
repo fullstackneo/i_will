@@ -37,7 +37,7 @@ const levelControllers = {
       });
   },
 
-  create: (req, res) => {
+  createOne: (req, res) => {
     Level.create(req.body)
       .then(dbData => res.json(dbData))
       .catch(err => {
@@ -46,7 +46,7 @@ const levelControllers = {
       });
   },
 
-  delete: (req, res) => {
+  deleteOne: (req, res) => {
     Level.destroy({
       where: {
         id: req.params.id
@@ -65,7 +65,7 @@ const levelControllers = {
       });
   },
 
-  update: (req, res) => {
+  updateOne: (req, res) => {
     Level.update(req.body, {
       where: {
         id: req.params.id

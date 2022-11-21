@@ -58,7 +58,7 @@ const ResultControllers = {
       });
   },
 
-  create: (req, res) => {
+  createOne: (req, res) => {
     Result.create(req.body)
       .then(dbData => res.json(dbData))
       .catch(err => {
@@ -67,7 +67,7 @@ const ResultControllers = {
       });
   },
 
-  delete: (req, res) => {
+  deleteOne: (req, res) => {
     Result.destroy({
       where: {
         id: req.params.id
@@ -86,7 +86,7 @@ const ResultControllers = {
       });
   },
 
-  update: (req, res) => {
+  updateOne: (req, res) => {
     Result.update(req.body, {
       where: {
         id: req.params.id

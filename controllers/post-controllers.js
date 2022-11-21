@@ -47,7 +47,7 @@ const postControllers = {
         res.status(500).json(err);
       });
   },
-  create: (req, res) => {
+  createOne: (req, res) => {
     Post.create(req.body)
       .then(dbData => {
         res.json(dbData);
@@ -57,7 +57,7 @@ const postControllers = {
         res.status(500).json(err);
       });
   },
-  delete: (req, res) => {
+  deleteOne: (req, res) => {
     Post.destroy({
       where: {
         id: req.params.id
@@ -75,7 +75,7 @@ const postControllers = {
         res.status(500).json(err);
       });
   },
-  update: (req, res) => {
+  updateOne: (req, res) => {
     Post.update(req.body, {
       where: {
         id: req.params.id

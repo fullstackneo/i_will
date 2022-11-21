@@ -1,5 +1,5 @@
 const { getTaskManagerId, getTaskStaffId, getTeamIds } = require('../utils/helpers');
-const { Task, User } = require('./../models');
+const { Task, User, Project, Position, Post, Comment } = require('./../models');
 
 const taskControllers = {
   getAll: async (req, res) => {
@@ -10,10 +10,15 @@ const taskControllers = {
         },
         include: [{
           model: User,
-          as: 'belongsTo'
-        }, {
+          as: 'user'
+        },
+        {
           model: User,
-          as: 'assignedBy'
+          as: 'manager'
+        },
+        {
+          model: Project,
+          as: 'project'
         }]
       });
 
@@ -28,7 +33,7 @@ const taskControllers = {
         },
         include: {
           model: User,
-          as: 'belongsTo'
+          as: 'manager'
         }
       });
       res.json({ tasks, teamTasks });
@@ -39,27 +44,43 @@ const taskControllers = {
   },
 
   getById: async (req, res) => {
-    const role = req.session.role;
     const roleId = req.session.user_id;
+
     try {
       const task = await Task.findOne({
         where: {
           id: req.params.id
         },
-        include: [{
-          model: User,
-          as: 'belongsTo'
-        }, {
-          model: User,
-          as: 'assignedBy'
-        }]
+        include: [
+          {
+            model: User,
+            as: 'assignees',
+            include: { model: Position, include: 'department' }
+          },
+          {
+            model: User,
+            as: 'manager'
+          },
+          {
+            model: Post,
+            include: [
+              { model: User, attributes: ['name', 'avatar'] },
+              {
+                model: Comment,
+                attributes: ['content', 'createdAt', 'updatedAt'],
+                include: {
+                  model: User, attributes: ['name', 'avatar']
+                }
+              }]
+          }
+        ]
       });
 
       if (!task) return res.status(404).json({ message: 'No data found' });
 
       const taskData = task.get({ plain: true });
 
-      if (taskData.user_id === roleId || (role === 'manager' && taskData.manager_id === roleId)) {
+      if (taskData.manager_id === roleId) {
         res.send(taskData);
       } else {
         return res.status(400).json({ message: 'unauthorized get action!' });
@@ -69,7 +90,7 @@ const taskControllers = {
     }
   },
 
-  create: (req, res) => {
+  createOne: (req, res) => {
     // manager creates tasks
     if (res.session.role !== 'manger' || !getTeamIds.includes(parseFloat(req.session.user_id))) {
       return res.status(400).json({ message: 'unauthorized action!' });
@@ -83,7 +104,7 @@ const taskControllers = {
       });
   },
 
-  delete: (req, res) => {
+  deleteOne: (req, res) => {
     // manager deletes tasks
     if (getTaskManagerId(req.params.id) !== req.session.user_id) {
       return res.status(400).json({ message: 'unauthorized action!' });
@@ -107,7 +128,7 @@ const taskControllers = {
       });
   },
 
-  update: (req, res) => {
+  updateOne: (req, res) => {
     // staff can update his task: i_will section
     // manager can update team tasks except i_will section
     if (getTaskStaffId(req.params.id) === req.session.user_id) {

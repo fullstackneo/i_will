@@ -51,7 +51,7 @@ const commentControllers = {
       });
   },
 
-  create: (req, res) => {
+  createOne: (req, res) => {
     Comment.create(req.body)
       .then(dbData => {
         res.json(dbData);
@@ -61,7 +61,7 @@ const commentControllers = {
         res.status(500).json(err);
       });
   },
-  delete: (req, res) => {
+  deleteOne: (req, res) => {
     Comment.destroy({
       where: {
         id: req.params.id
@@ -79,7 +79,7 @@ const commentControllers = {
         res.status(500).json(err);
       });
   },
-  update: (req, res) => {
+  updateOne: (req, res) => {
     Comment.update(req.body, {
       where: {
         id: req.params.id

@@ -1,4 +1,4 @@
-function withAuth (roles) {
+function withAuth (...roles) {
   return (req, res, next) => {
     // must login
     if (!req.session.loggedIn) return res.redirect('/login');

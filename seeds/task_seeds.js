@@ -10,6 +10,10 @@ for (let i = 0; i < 60; i++) {
       min: 1,
       max: 39
     }),
+    project_id: faker.datatype.number({
+      min: 1,
+      max: 5
+    }),
     manager_id: Math.floor(faker.datatype.number({
       min: 1,
       max: 39

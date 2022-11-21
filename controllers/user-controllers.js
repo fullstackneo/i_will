@@ -1,3 +1,4 @@
+const sequelize = require('../config/connection');
 const { getTeamIds } = require('../utils/helpers');
 const { User, Post, Comment, Position, Department, Access } = require('./../models');
 const userControllers = {
@@ -10,6 +11,7 @@ const userControllers = {
       const ids = await getTeamIds(req.session.user_id);
       where = { id: ids };
     }
+
     User.findAll({
       where,
       attributes: {
@@ -18,11 +20,13 @@ const userControllers = {
       include: [{
         model: User, as: 'manager', attributes: ['name']
       }, {
-        model: User, as: 'team_members', attributes: ['name']
+        model: User, as: 'team', attributes: ['name']
       }, {
         model: Post, include: Comment
       }, {
         model: Position, include: Department
+      }, {
+        model: Access
       }]
     })
       .then(dbData => {
@@ -40,20 +44,20 @@ const userControllers = {
   },
 
   getById: async (req, res) => {
-    const id = parseInt(req.params.id);
-    const role = req.session.role;
-    const roleId = parseInt(req.session.user_id);
+    // const id = parseInt(req.params.id);
+    // const role = req.session.role;
+    // const roleId = parseInt(req.session.user_id);
     // 'staff' can retrieve his/her own info
     // manager can retrieve his teammember
     // hr can retrieve anyone
-    if (role === 'staff' && roleId !== id) {
-      return res.status(400).json({ message: 'unauthorized action failed!' });
-    } else if (role === 'manager') {
-      const teamIds = await getTeamIds(roleId);
+    // if (role === 'staff' && roleId !== id) {
+    //   return res.status(400).json({ message: 'unauthorized action failed!' });
+    // } else if (role === 'manager') {
+    //   const teamIds = await getTeamIds(roleId);
 
-      // 'manager' can only info his team members or himself
-      if (!teamIds.includes(id) && roleId !== id) return res.status(400).json({ message: 'unauthorized action failed!' });
-    }
+    //   // 'manager' can only info his team members or himself
+    //   if (!teamIds.includes(id) && roleId !== id) return res.status(400).json({ message: 'unauthorized action failed!' });
+    // }
 
     User.findOne({
       where: {
@@ -64,9 +68,10 @@ const userControllers = {
       },
       include: [
         { model: User, as: 'manager', attributes: ['name'] },
-        { model: User, as: 'team_members', attributes: ['name'] },
+        { model: User, as: 'team', attributes: ['name'] },
         { model: Post, include: Comment },
-        { model: Position, include: Department }]
+        { model: Position, include: Department },
+        { model: Access }]
     })
       .then(dbData => {
         if (!dbData) {
@@ -82,7 +87,7 @@ const userControllers = {
       });
   },
 
-  update: (req, res) => {
+  updateOne: (req, res) => {
     // hr update anyone's all info
     // others update his own basic info
     const roleId = parseInt(req.session.user_id);
@@ -114,7 +119,7 @@ const userControllers = {
       });
   },
 
-  delete: async (req, res) => {
+  deleteOne: async (req, res) => {
     const id = parseInt(req.params.id);
     const role = req.session.role;
     const roleId = parseInt(req.session.user_id);
@@ -142,7 +147,7 @@ const userControllers = {
       });
   },
 
-  create: async (req, res) => {
+  createOne: async (req, res) => {
   // return error message if the session already exists
     // if (await isSameSession(req.sessionID)) {
     //   return res.status(400).json({ message: 'invalid request' });
@@ -160,11 +165,7 @@ const userControllers = {
         req.session.user_id = dbData.id;
         req.session.name = dbData.name;
         req.session.loggedIn = true;
-
         // // });
-        // await Position.findOne({ where: { id: dbData.position_id }, include: [Access] })
-        //   .then(role => { req.session.role = role.get({ plain: true }).access.role; });
-        res.json(dbData);
       })
       .catch(err => {
         console.log(err);
@@ -172,51 +173,67 @@ const userControllers = {
       });
   },
 
-  login: (req, res) => {
-    User.findOne({
-      where: {
-        email: req.body.email
-      }
-    }).then(async (dbUserData) => {
-      if (!dbUserData) {
-        res.status(400).json({ message: 'username or password not correct!' });
-        return;
+  login: async (req, res) => {
+    try {
+      if (req.session.loggedIn) { return res.status(204).end(); }
+
+      const loginUser = await User.findOne({
+        where: {
+          email: req.body.email
+        },
+        include: Access
+      });
+
+      if (!loginUser) {
+        return res.status(400).json({ message: 'username or password not correct!' });
       }
 
-      const validPassword = dbUserData.checkPassword(req.body.password);
+      const validPassword = loginUser.checkPassword(req.body.password);
 
       if (!validPassword) {
-        res.status(400).json({ message: 'username or password not correct!' });
-        return;
+        return res.status(400).json({ message: 'username or password not correct!' });
       }
+
       // req.session.save(() => {
       // declare session variables
-      req.session.user_id = dbUserData.id;
-      req.session.username = dbUserData.name;
+      req.session.user_id = loginUser.id;
+      req.session.username = loginUser.name;
       req.session.loggedIn = true;
+      req.session.role = loginUser.access.role;
 
-      await Access.findOne({ where: { id: dbUserData.access_id } })
-        .then(role => { req.session.role = role.get({ plain: true }).role; });
-      // });
-
+      await User.update({ online: true }, {
+        where: { id: req.session.user_id }
+      });
       res.json({
-        user: dbUserData,
+        user: { ...loginUser.get({ plain: true }), online: true },
         message: 'You are now logged in!'
       });
-    });
+    } catch (err) {
+      console.log(err);
+      res.status(500).json(err);
+    }
   },
 
-  logout: (req, res) => {
-  // if (req.session.loggedIn) {
-    req.session.destroy(() => {
-      res.status(204).end();
-    });
-  // } else {
-  //   res.status(404).end();
-  // }
+  logout: async (req, res) => {
+    try {
+      if (!req.session.loggedIn) {
+        return res.status(204).end();
+      }
+
+      await User.update({ online: false }, {
+        where: {
+          id: req.session.user_id
+        }
+      });
+
+      req.session.destroy(async () => {
+        res.json({ message: 'you have logged out!' });
+      });
+    } catch (err) {
+      console.log(err);
+      res.status(500).json(err);
+    }
   }
 };
-
-;
 
 module.exports = userControllers;

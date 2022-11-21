@@ -16,6 +16,14 @@ class Task extends Sequelize.Model {
         type: DataTypes.TEXT,
         allowNull: false
       },
+      project_id: {
+        type: DataTypes.INTEGER.UNSIGNED,
+        allowNull: false,
+        references: {
+          model: 'project',
+          key: 'id'
+        }
+      },
       user_id: {
         type: DataTypes.INTEGER.UNSIGNED,
         allowNull: true,

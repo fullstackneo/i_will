@@ -1,8 +1,12 @@
 const taskC = require('./../../controllers/task-controllers');
 const resultC = require('./../../controllers/result-controllers');
 const userC = require('./../../controllers/user-controllers');
+const projectC = require('./../../controllers/project-controllers');
 
 const router = require('express').Router();
+
+// projects
+router.route('/projects').get(projectC.getAll);
 
 // results
 router.route('/results').get(resultC.getAll);
