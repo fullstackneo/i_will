@@ -5,8 +5,8 @@ const arr = [];
 for (let i = 0; i < 100; i++) {
   arr.push({
     post_id: faker.datatype.number({
-      min: 1,
-      max: 60
+      min: 2,
+      max: 4
     }),
     content: faker.lorem.lines(2),
     user_id: faker.datatype.number({

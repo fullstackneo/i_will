@@ -9,6 +9,7 @@ const seedResult = require('./result_seeds');
 const seedPost = require('./post_seeds');
 const seedAccess = require('./access_seeds');
 const seedComment = require('./comment_seeds');
+const seedProject_User = require('./project_user_seeds');
 
 async function seedAll () {
   await sequelize.sync({ force: true });
@@ -18,10 +19,10 @@ async function seedAll () {
   await seedPosition();
   await seedUser();
   await seedProject();
+  await seedProject_User();
   await seedTask();
   await seedResult();
   await seedPost();
   await seedComment();
-  await sequelize.sync({ force: false });
 }
 seedAll();
