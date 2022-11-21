@@ -6,9 +6,14 @@ router.get('/', (req, res) => {
   req.session.role = 'manager';
   req.session.username = 'Neo';
   req.session.user_id = 2;
+  req.session.avatar = 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80';
   req.session.user_menu = [{
-    name: 'Dashboard',
-    path: '/dashboard',
+    name: 'Profile',
+    path: '/profile',
+    icon: ''
+  }, {
+    name: 'Projects',
+    path: '/projects',
     icon: ''
   }, {
     name: 'Team',
@@ -19,10 +24,14 @@ router.get('/', (req, res) => {
     path: '/tasks',
     icon: ''
   }];
-
+  return res.redirect('/profile');
   res.render('homepage', {
-    current_page: req.session.currentPage,
-    user_menu: req.session.user_menu,
+    loggedUser: {
+      menu: req.session.user_menu,
+      name: req.session.username,
+      id: req.session.user_id,
+      avatar: req.session.avatar
+    },
     layout: 'main'
   });
 });
