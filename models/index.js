@@ -10,6 +10,7 @@ const _User = require('./User');
 const _Access = require('./Access');
 const _Session = require('./Session');
 const _Project = require('./Project');
+const _Project_User = require('./Project_User');
 const sequelize = require('../config/connection');
 
 function initModels (sequelize) {
@@ -24,6 +25,7 @@ function initModels (sequelize) {
   const Session = _Session(sequelize, DataTypes);
   const Access = _Access(sequelize, DataTypes);
   const Project = _Project(sequelize, DataTypes);
+  const Project_User = _Project_User(sequelize, DataTypes);
 
   Position.belongsTo(Department, {
     foreignKey: 'department_id'
@@ -61,6 +63,7 @@ function initModels (sequelize) {
     foreignKey: 'post_id',
     onDelete: 'CASCADE'
   });
+
   Post.belongsTo(Task, {
     foreignKey: 'task_id',
     onDelete: 'CASCADE'
@@ -69,6 +72,7 @@ function initModels (sequelize) {
     foreignKey: 'task_id',
     onDelete: 'CASCADE'
   });
+
   Result.belongsTo(Task, {
     foreignKey: 'task_id',
     onDelete: 'CASCADE'
@@ -101,14 +105,28 @@ function initModels (sequelize) {
     as: 'user'
   });
 
+  // Project.hasMany(Project_User, {
+  //   foreignKey: 'project_id'
+  // });
+
+  // Project_User.belongsTo(Project, {
+  //   foreignKey: 'project_id'
+  // });
+
+  // User.hasMany(Project_User, {
+  //   foreignKey: 'user_id'
+  // });
+
+  // Project_User.belongsTo(User, {
+  //   foreignKey: 'user_id'
+  // });
+
   Project.hasMany(Task, {
-    foreignKey: 'project_id',
-    as: 'tasks'
+    foreignKey: 'project_id'
   });
 
   Task.belongsTo(Project, {
-    foreignKey: 'project_id',
-    as: 'project'
+    foreignKey: 'project_id'
   });
 
   User.hasMany(Project, {
@@ -122,11 +140,31 @@ function initModels (sequelize) {
     as: 'manager'
   });
 
-  User.hasMany(Task, {
-    foreignKey: 'user_id',
-    as: 'tasksToDo'
+  Project.belongsToMany(User, {
+    through: Project_User,
+    foreignKey: 'project_id',
+    as: 'team'
   });
 
+  User.belongsToMany(Project, {
+    through: Project_User,
+    foreignKey: 'user_id',
+    as: 'project'
+  });
+
+  // staff and task
+  User.hasMany(Task, {
+    foreignKey: 'user_id'
+    // as: 'tasksToDo'
+  });
+
+  Task.belongsTo(User, {
+    foreignKey: 'user_id',
+    as: 'assignees'
+    // as: 'toDoBy'
+  });
+
+  // manager and task
   Task.belongsTo(User, {
     foreignKey: 'manager_id',
     as: 'manager'
@@ -142,9 +180,17 @@ function initModels (sequelize) {
     as: 'manager'
   });
 
+  User.hasMany(Task, {
+    foreignKey: 'user_id'
+  });
+
+  Task.belongsTo(User, {
+    foreignKey: 'manager_id'
+  });
+
   User.hasMany(User, {
     foreignKey: 'manager_id',
-    as: 'team_members'
+    as: 'team'
   });
 
   return {
@@ -158,7 +204,8 @@ function initModels (sequelize) {
     User,
     Session,
     Access,
-    Project
+    Project,
+    Project_User
   };
 }
 

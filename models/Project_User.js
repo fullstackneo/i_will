@@ -1,9 +1,9 @@
 const Sequelize = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
-  return Project.init(sequelize, DataTypes);
+  return Project_User.init(sequelize, DataTypes);
 };
 
-class Project extends Sequelize.Model {
+class Project_User extends Sequelize.Model {
   static init (sequelize, DataTypes) {
     return super.init({
       id: {
@@ -12,13 +12,15 @@ class Project extends Sequelize.Model {
         allowNull: false,
         primaryKey: true
       },
-      title: {
-        type: DataTypes.TEXT,
-        allowNull: false
-      },
-      manager_id: {
+      project_id: {
         type: DataTypes.INTEGER.UNSIGNED,
-        allowNull: true,
+        references: {
+          model: 'project',
+          key: 'id'
+        }
+      },
+      user_id: {
+        type: DataTypes.INTEGER.UNSIGNED,
         references: {
           model: 'user',
           key: 'id'
@@ -26,8 +28,8 @@ class Project extends Sequelize.Model {
       }
     }, {
       sequelize,
-      modelName: 'project',
-      tableName: 'project',
+      modelName: 'project_user',
+      tableName: 'project_user',
       timestamps: true
     });
   }

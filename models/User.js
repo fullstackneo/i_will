@@ -40,6 +40,8 @@ class User extends Sequelize.Model {
       },
       access_id: {
         type: DataTypes.TINYINT.UNSIGNED,
+        // default staff
+        defaultValue: 4,
         allowNull: true,
         reference: {
           model: 'access',
@@ -65,13 +67,12 @@ class User extends Sequelize.Model {
       manager_id: {
         type: DataTypes.INTEGER.UNSIGNED,
         allowNull: true,
-
         references: {
           model: 'user',
           key: 'id'
         }
       },
-      oneline: {
+      online: {
         type: DataTypes.BOOLEAN,
         defaultValue: false
       },
@@ -79,7 +80,8 @@ class User extends Sequelize.Model {
         type: DataTypes.STRING(255),
         defaultValue: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80'
       }
-    }, {
+    },
+    {
       hooks: {
         async beforeCreate (newUserData) {
           newUserData.password = await bcrypt.hash(newUserData.password, 10);

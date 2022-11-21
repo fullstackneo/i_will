@@ -44,9 +44,12 @@ class Task extends Sequelize.Model {
         type: DataTypes.TEXT,
         allowNull: false
       },
-      i_will: {
-        type: DataTypes.TEXT,
-        allowNull: false
+      isActive: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: true
+      },
+      tags: {
+        type: DataTypes.JSON
       }
     }, {
       sequelize,
