@@ -1,20 +1,20 @@
 <div class="px-4 sm:px-6 lg:px-8">
     <div class="sm:flex sm:items-center">
         <div class="sm:flex-auto">
-            <h1 class="text-xl font-semibold text-gray-900">Tasks</h1>
+            <h1 class="text-xl font-semibold text-gray-900">{{format_firstUpperCase current_page}}</h1>
         </div>
 
     </div>
     <div class="mt-8 bg-white shadow overflow-hidden sm:rounded-md">
         <ul role="list" class="divide-y divide-gray-200">
-            {{#each teamTasks}}
+            {{#each projects}}
                 <li>
-                    <a href="#" class="block hover:bg-gray-50">
+                    <a href="/projects/{{id}}/tasks" class="block hover:bg-gray-50">
                         <div class="px-4 py-4 flex items-center sm:px-6">
                             <div class="min-w-0 flex-1 sm:flex sm:items-center sm:justify-between">
                                 <div class="truncate">
                                     <div class="flex text-sm">
-                                        <p class="font-medium text-indigo-600 truncate"></p>
+                                        <p class="font-medium text-indigo-600 truncate">{{title}}</p>
                                         {{!-- <p class="ml-1 flex-shrink-0 font-normal text-gray-500">in Engineering</p> --}}
                                     </div>
                                     <div class="mt-2 flex">
@@ -25,19 +25,29 @@
                                             </svg>
                                             <p>
                                                 Created on
-                                                <time datetime="2020-01-07">January 7, 2020</time>
+                                                <time datetime="2020-01-07">{{format_date createdAt}}</time>
                                             </p>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="mt-4 flex-shrink-0 sm:mt-0 sm:ml-5">
+
+                                <div class="mt-4 flex items-center flex-shrink-0 sm:mt-0 sm:ml-5">
                                     <div class="flex overflow-hidden -space-x-1">
-                                        <img class="inline-block h-6 w-6 rounded-full ring-2 ring-white" src="" alt="Dries Vincent">
-                                        <img class="inline-block h-6 w-6 rounded-full ring-2 ring-white" src="" alt="Dries Vincent">
-                                        <img class="inline-block h-6 w-6 rounded-full ring-2 ring-white" src="" alt="Dries Vincent">
+                                        {{#each (limit_array team 5)}}
+                                            <img class="inline-block h-6 w-6 rounded-full ring-2 ring-white" src="{{avatar}}" alt="{{avatar}}">
+                                        {{/each}}
                                     </div>
+                                    {{#if (isGt team.length 5)}}
+                                        <span class="text-gray-400 text-sm ml-1">+{{math team.length '-' 5}}</span>
+                                    {{/if}}
+                                    {{!-- <span class="fa-solid fa-ellipsis ml-1"></span> --}}
+
+
                                 </div>
+
+
                             </div>
+
                             <div class="ml-5 flex-shrink-0">
                                 <!-- Heroicon name: solid/chevron-right -->
                                 <svg class="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
