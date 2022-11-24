@@ -9,7 +9,7 @@ const projects = require('./projects');
 router.use(homePage);
 router.use(dashboard);
 router.use('/projects', withAuth('manager'), projects);
-router.use('/projects/:projectId', withAuth('manager', 'staff'), tasks);
+router.use('/tasks', withAuth('manager', 'staff'), tasks);
 router.use(withAuth('manager', 'staff'), team);
 
 module.exports = router;

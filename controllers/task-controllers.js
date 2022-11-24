@@ -3,10 +3,12 @@ const { Task, User, Project, Position, Post, Comment } = require('./../models');
 
 const taskControllers = {
   getAll: async (req, res) => {
+    const pageSize = 10;
+
     try {
-      const tasks = await Task.findAll({
+      const tasks = await Task.findAndCountAll({
         where: {
-          user_id: req.session.user_id
+          manager_id: req.session.user_id
         },
         include: [{
           model: User,
@@ -19,24 +21,40 @@ const taskControllers = {
         {
           model: Project,
           as: 'project'
-        }]
+        }],
+        limit: pageSize,
+        offset: (req.query.page - 1) * pageSize
       });
-
       if (!tasks) return res.status(404).json({ message: 'No data found' });
 
-      // for staff
-      if (req.session.role === 'staff') return res.json(tasks);
-      // for manager
-      const teamTasks = await Task.findAll({
-        where: {
-          manager_id: req.session.user_id
+      // page
+      const totalPage = Math.ceil(tasks.count / pageSize);
+      const totalCount = tasks.count;
+      const currentPage = +req.query.page;
+      const start = (currentPage - 1) * pageSize + 1;
+      const end = currentPage === totalPage ? totalCount : (start + pageSize - 1);
+      const leftPages = totalPage - currentPage;
+
+      const pagination = {
+        totalCount,
+        start,
+        end,
+        totalPage,
+        currentPage,
+        leftPages
+      };
+
+      res.json({
+        loggedUser: {
+          menu: req.session.user_menu,
+          name: req.session.username,
+          id: req.session.user_id,
+          avatar: req.session.avatar
         },
-        include: {
-          model: User,
-          as: 'manager'
-        }
+        pagination,
+        tasks: tasks.rows.map(el => el.get({ plain: true })),
+        layout: 'main'
       });
-      res.json({ tasks, teamTasks });
     } catch (err) {
       console.log(err);
       res.status(500).json(err);
