@@ -4,6 +4,7 @@ const { Task, User, Project, Position, Post, Comment } = require('./../models');
 const taskControllers = {
   getAll: async (req, res) => {
     const pageSize = 10;
+    const currentPage = +req.query.page || 1;
 
     try {
       const tasks = await Task.findAndCountAll({
@@ -27,21 +28,16 @@ const taskControllers = {
       });
       if (!tasks) return res.status(404).json({ message: 'No data found' });
 
-      // page
-      const totalPage = Math.ceil(tasks.count / pageSize);
-      const totalCount = tasks.count;
-      const currentPage = +req.query.page;
-      const start = (currentPage - 1) * pageSize + 1;
-      const end = currentPage === totalPage ? totalCount : (start + pageSize - 1);
-      const leftPages = totalPage - currentPage;
-
+      // display pagination: result and page numbers
+      const totalResults = tasks.count;
+      const totalPages = Math.ceil(tasks.count / pageSize);
+      if (currentPage > totalPages) {
+        res.redirect(`/tasks?page=${totalPages}`);
+      }
       const pagination = {
-        totalCount,
-        start,
-        end,
-        totalPage,
         currentPage,
-        leftPages
+        totalResults,
+        totalPages
       };
 
       res.json({
