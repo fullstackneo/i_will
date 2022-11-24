@@ -2,15 +2,14 @@
     {{#each project.tasks}}
         <li class="">
             <a href="/projects/{{project_id}}/tasks/{{id}}" class="relative block bg-white py-5 px-4 hover:bg-gray-50 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 hover:ring-2 hover:ring-inset hover:ring-indigo-600">
-                <div class="flex justify-between space-x-3">
-                    <div class="min-w-0 flex-1">
+                <div class="flex flex-col xl:flex-row justify-between">
+                    <div class="min-w-0 ">
                         {{!-- <a href="#" class="block focus:outline-none"> --}}
                         <span class="absolute inset-0" aria-hidden="true"></span>
                         <p class="text-sm font-bold  text-gray-900 truncate">{{title}}</p>
                         <div>
                             <p class="line-clamp-2 text-sm text-gray-600">{{objective}}</p>
                         </div>
-                        {{!-- </a> --}}
                     </div>
                     <div class="flex flex-col justify-end items-end">
                         <div class="flex justify-end items-center">
@@ -24,3 +23,55 @@
         </li>
     {{/each}}
 </ul>
+
+<div data-maxpage="{{pagination.totalPages}}" data-startpage="{{pagination.startPage}}" data-endpage="{{pagination.endPage}}" data-currentpage="{{pagination.currentPage}}" class="page bg-white px-4 py-3 flex items-center justify-center border-t border-gray-200 sm:px-6">
+    {{!-- <div class="flex-1 flex justify-between sm:hidden">
+        <a href="#" class="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"> Previous </a>
+        <a href="#" class="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"> Next </a>
+    </div> --}}
+    <div class="sm:flex-1 sm:flex sm:items-center sm:justify-between">
+        <div class="hidden sm:block">
+            <p class="text-sm text-gray-700">
+                Showing
+                <span class="font-medium">{{getResultNumber pagination.currentPage pagination.totalResults 0}}</span>
+                to
+                <span class="font-medium">{{getResultNumber pagination.currentPage pagination.totalResults 1}}</span>
+                of
+                <span class="font-medium">{{pagination.totalResults}}</span>
+                results
+            </p>
+        </div>
+        <div>
+            <nav class="inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
+                <!-- Current: "z-10 bg-indigo-50 border-indigo-500 text-indigo-600", Default: "bg-white border-gray-300 text-gray-500 hover:bg-gray-50" -->
+
+                {{!-- prev button --}}
+                <a {{#if (math pagination.currentPage '!==' 1)}}href="/projects/{{project.id}}/tasks?page={{math pagination.currentPage '-' 1}}" {{/if}} class="{{#if (math pagination.currentPage '===' 1)}}cursor-not-allowed{{/if}} px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                    <!-- Heroicon name: solid/chevron-left -->
+                    <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="{{#if (math pagination.currentPage '===' 1)}}#dddddd{{else}}currentColor{{/if}}" aria-hidden="true">
+                        <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
+                    </svg>
+                </a>
+
+                {{#each (getPages pagination.currentPage pagination.totalPages)}}
+                    {{#if (math this '===' '...')}}
+                        <span class="px-3 pt-1 border border-gray-300 bg-white text-sm font-medium text-gray-700 select-none"> ... </span>
+                    {{else if (math this '===' ../pagination.currentPage)}}
+                        <a href="/projects/{{../project.id}}//tasks?page={{this}}" class="z-10 bg-indigo-50 border-indigo-500 text-indigo-600 px-4 py-2 border text-sm font-medium"> {{this}} </a>
+                    {{else}}
+                        <a href="/projects/{{../project.id}}/tasks?page={{this}}" class="bg-white border-gray-300 text-gray-500 hover:bg-gray-50 px-4 py-2 border text-sm font-medium"> {{this}} </a>
+                    {{/if}}
+                {{/each}}
+
+                {{!-- next button --}}
+                <a {{#if (math pagination.currentPage '<' pagination.totalPages)}}href="/projects/{{project.id}}/tasks?page={{math pagination.currentPage '+' 1}}" {{/if}} class="{{#if (math pagination.currentPage '===' pagination.totalPages)}}cursor-not-allowed{{/if}} px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                    <!-- Heroicon name: solid/chevron-right -->
+                    <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="{{#if (math pagination.currentPage '===' pagination.totalPages)}}#dddddd{{else}}currentColor{{/if}}" aria-hidden="true">
+                        <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+                    </svg>
+                </a>
+
+            </nav>
+        </div>
+    </div>
+</div>

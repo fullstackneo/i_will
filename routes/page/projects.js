@@ -79,7 +79,7 @@ router.get('/:projectId/tasks', async (req, res) => {
       totalPages
     };
 
-    res.render('projectTasks', {
+    res.render('singleProject', {
       loggedUser: {
         menu: req.session.user_menu,
         name: req.session.username,
