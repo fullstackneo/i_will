@@ -43,15 +43,19 @@ router.get('/:projectId', (req, res) => {
 
 router.get('/:projectId/tasks', async (req, res) => {
   const pageSize = 10;
-  const currentPage = +req.query.page || 1;
+
+  const { assignee, page = 1 } = req.query;
+
   try {
     const tasks = await Task.findAndCountAll({
       where: {
-        project_id: req.params.projectId
+        project_id: req.params.projectId,
+        manager_id: req.session.user_id
       },
       include: [{
         model: User,
-        as: 'user'
+        as: 'assignees',
+        where: assignee ? { name: assignee } : {}
       },
       {
         model: User,
@@ -62,24 +66,59 @@ router.get('/:projectId/tasks', async (req, res) => {
         as: 'project'
       }],
       limit: pageSize,
-      offset: (currentPage - 1) * pageSize
+      offset: (page - 1) * pageSize
     });
-
-    if (!tasks.count) return res.status(404).json({ message: 'No data found' });
 
     // display pagination: result and page numbers
     const totalResults = tasks.count;
     const totalPages = Math.ceil(tasks.count / pageSize);
-    if (currentPage > totalPages) {
-      res.redirect(`/tasks?page=${totalPages}`);
-    }
+
     const pagination = {
-      currentPage,
+      currentPage: page,
       totalResults,
       totalPages
     };
 
-    res.render('singleProject', {
+    // get filter list
+
+    const assigneeList = await Task.findAll({
+      where: {
+        manager_id: req.session.user_id
+      },
+      attributes: ['id'],
+      include: [
+        {
+          model: User,
+          as: 'assignees',
+          attributes: ['id', 'name']
+        }],
+      group: ['user_id']
+    })
+      .then(res => res.map(el => {
+        const value = el.get({ plain: true }).assignees.name;
+        return {
+          name: value,
+          checked: assignee ? (assignee === value || assignee.includes(value)) : false
+        };
+      }));
+
+    const lists = {
+      assignee: assigneeList
+    };
+
+    // return res.json({
+    //   loggedUser: {
+    //     menu: req.session.user_menu,
+    //     name: req.session.username,
+    //     id: req.session.user_id,
+    //     avatar: req.session.avatar
+    //   },
+    //   pagination,
+    //   tasks: tasks.rows.map(el => el.get({ plain: true })),
+    //   lists,
+    //   layout: 'main'
+    // });
+    res.render('tasks', {
       loggedUser: {
         menu: req.session.user_menu,
         name: req.session.username,
@@ -87,10 +126,8 @@ router.get('/:projectId/tasks', async (req, res) => {
         avatar: req.session.avatar
       },
       pagination,
-      project: {
-        id: req.params.projectId,
-        tasks: tasks.rows.map(el => el.get({ plain: true }))
-      },
+      tasks: tasks.rows.map(el => el.get({ plain: true })),
+      lists,
       layout: 'main'
     });
   } catch (err) {
@@ -133,8 +170,6 @@ router.get('/:projectId/tasks/:taskId', async (req, res) => {
     if (!task) return res.status(404).json({ message: 'No data found' });
 
     const taskData = task.get({ plain: true });
-
-    // console.log(taskData.manager_id);
 
     if (taskData.manager_id === req.session.user_id) {
       res.render('singleTask', {

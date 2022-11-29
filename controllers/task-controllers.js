@@ -3,8 +3,9 @@ const { Task, User, Project, Position, Post, Comment } = require('./../models');
 
 const taskControllers = {
   getAll: async (req, res) => {
+    const { project, assignee, page = 1 } = req.query;
+
     const pageSize = 10;
-    const currentPage = +req.query.page || 1;
 
     try {
       const tasks = await Task.findAndCountAll({
@@ -13,7 +14,8 @@ const taskControllers = {
         },
         include: [{
           model: User,
-          as: 'user'
+          as: 'assignees',
+          where: assignee ? { name: assignee } : {}
         },
         {
           model: User,
@@ -21,21 +23,34 @@ const taskControllers = {
         },
         {
           model: Project,
-          as: 'project'
+          as: 'project',
+          where: project ? { title: project } : {}
         }],
         limit: pageSize,
-        offset: (req.query.page - 1) * pageSize
+        offset: (page - 1) * pageSize
       });
       if (!tasks) return res.status(404).json({ message: 'No data found' });
 
       // display pagination: result and page numbers
       const totalResults = tasks.count;
       const totalPages = Math.ceil(tasks.count / pageSize);
-      if (currentPage > totalPages) {
-        res.redirect(`/tasks?page=${totalPages}`);
-      }
+
+      const eligibleAssignees = await User.findAll({
+        where: {
+          manager_id: req.session.user_id
+        },
+        include: {
+          model: Project,
+          as: 'project',
+          where: project ? { title: project } : {}
+        }
+      });
+      console.log(eligibleAssignees.map(el => el.get({ plain: true })));
+
+      // const eligibleProjects =;
+
       const pagination = {
-        currentPage,
+        currentPage: +page,
         totalResults,
         totalPages
       };

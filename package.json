@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "tailwind": "npx tailwindcss -i ./tailwind.scss -o ./public/css/index.css --minify --watch --postcss",
-    "start": "node server.js"
+    "start": "node server.js",
+    "bsync": "browser-sync start --proxy \"localhost:3001\" --files \"**\""
   },
   "repository": {
     "type": "git",
